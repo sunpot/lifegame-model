@@ -52,15 +52,21 @@ def calc_weight(F):
     base_array = np.arange(0, height*width).reshape(height, width)
     tmp = base_array * F
     value = tmp.sum()
-    print(value)
+    sys.stdout.write("%s,"%value)
     return value
 
 
 def save_all(list):
-    fname = '%s.csv' % str(uuid.uuid4())
-    for item in list:
-        with open(fname, 'a') as f:
-            np.savetxt(f,item, fmt='%d', delimiter=',')
+    fname = '%s.npy' % str(uuid.uuid4())
+    if len(list) < 20:
+        print("\n\nDiscard.\n\n")
+        return
+    print("\n\nSaving %s\n\n"%fname)
+    array = np.zeros((height, width, len(list)))
+    for i in range(len(list)):
+        array[:,:,i] = list[i]
+    np.save(fname, array)
+    return
 
 def main():
     p = 0.08
@@ -69,29 +75,22 @@ def main():
     F = init_state(width, height, init_alive_prob=p)
     ret = 0
     wait = 10
+    i = 0
     while True:
-        img = to_image(F, scale=10.0)
-        cv2.imshow("test", img)
+        if 0 == i%50:
+            img = to_image(F, scale=10.0)
+            cv2.imshow("test", img)
+            i = 0
+        i += 1
         q = queue(q, calc_weight(F))
         is_same = is_all_same(q)
         results.append(F)
-        ret = cv2.waitKey(wait)
+        # ret = cv2.waitKey(wait)
         F = next_generation(F)
-        if ret == ord('r') or is_same:
+        if is_same:
             save_all(results)
             results = []
             F = init_state(width, height, init_alive_prob=p)
-        if ret == ord('s'):
-            wait = min(wait*2, 1000)
-        if ret == ord('f'):
-            wait = max(wait//2, 10)
-        if ret == ord('q') or ret == 27:
-            break
-        if ret == ord('w'):
-            np.savetxt("save.txt", F, "%d")
-        if ret == ord('l'):
-            if os.path.exists("save.txt"):
-                F = np.loadtxt("save.txt")
 
     cv2.destroyAllWindows()
 
