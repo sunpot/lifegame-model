@@ -58,7 +58,7 @@ def calc_weight(F):
 
 def save_all(list):
     fname = '.\Data\%s.npy' % str(uuid.uuid4())
-    if len(list) < 20:
+    if len(list) < 30:
         print("\n\nDiscard.\n\n")
         return
     print("\n\nSaving %s\n\n"%fname)
@@ -74,7 +74,7 @@ def main():
     results = []
     F = init_state(width, height, init_alive_prob=p)
     ret = 0
-    wait = 10
+    wait = 1
     i = 0
     while True:
         if 0 == i%50:
@@ -85,7 +85,7 @@ def main():
         q = queue(q, calc_weight(F))
         is_same = is_all_same(q)
         results.append(F)
-        # ret = cv2.waitKey(wait)
+        ret = cv2.waitKey(wait)
         F = next_generation(F)
         if is_same:
             save_all(results)
