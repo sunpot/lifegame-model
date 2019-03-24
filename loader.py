@@ -34,12 +34,14 @@ def load_one(length=20):
     print("Length: %s, Selected index: %s, File path: %s" % (len(items), idx, items[idx]))
     array = np.load(items[idx])
     arr_shape = array.shape # (32, 48, n)
+    d_input = []
+    d_target = []
 
     idx = random.randint(0, arr_shape[2]-length-1)
-    d_input = array[:, :, idx:idx+length].reshape((height*width, length)).T
-    d_target = array[:, :, idx+length].flatten()
+    d_input.append(array[:, :, idx:idx+length].reshape((height*width, length)).T)
+    d_target.append(array[:, :, idx+length].flatten())
     print("Data length: %s, Selected index: %s" % (arr_shape[2], idx))
-    return d_input, d_target
+    return np.array(d_input), np.array(d_target)
 
 
 def diff(data1, data2):
@@ -52,8 +54,9 @@ def split(d_input, d_target):
 
 def viewer(slice_data):
     img = lifegame.to_image(slice_data)
+    print("Press any key within activated opencv window.")
     cv2.imshow("test", img)
-    cv2.waitKey(200)
+    cv2.waitKey(0)
 
 def main():
     X, Y = load()

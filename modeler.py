@@ -9,6 +9,8 @@ from keras.layers import Dense, Activation
 import loader
 
 
+# 次やるやつ→https://omedstu.jimdo.com/2018/06/29/kerasのconvlstmの実装を見る/
+
 class Params:
     n_in = 1536
     n_hidden = 1000
