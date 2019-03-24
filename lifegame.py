@@ -57,8 +57,8 @@ def calc_weight(F):
 
 
 def save_all(list):
-    fname = '.\Data\%s.npy' % str(uuid.uuid4())
-    if len(list) < 20:
+    fname = '.\Val\%s.npy' % str(uuid.uuid4())
+    if len(list) < 30:
         print("\n\nDiscard.\n\n")
         return
     print("\n\nSaving %s\n\n"%fname)

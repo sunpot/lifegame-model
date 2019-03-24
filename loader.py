@@ -15,7 +15,7 @@ def load(n=10000):
     data_target = []
     items = glob.glob("./Data/*.npy")
     for idx, item in enumerate(items):
-        print("Loading %s/%s" % (idx+1, len(items)))
+        # print("Loading %s/%s" % (idx+1, len(items)))
         array = np.load(item)
         arr_shape = array.shape # (32, 48, n)
         for i in range(0, arr_shape[2]-input_len):
@@ -28,8 +28,8 @@ def load(n=10000):
     return result_input, result_target
 
 
-def split(d_input, d_target):
-    x, val_x, y, val_y = train_test_split(d_input, d_target, test_size=int(len(d_input) * 0.2), shuffle=False)
+def split(d_input, d_target, test_ratio=0.2):
+    x, val_x, y, val_y = train_test_split(d_input, d_target, test_size=int(len(d_input) * test_ratio), shuffle=False)
     return x, val_x, y, val_y
 
 def viewer(slice_data):
