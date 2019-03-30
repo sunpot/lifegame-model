@@ -6,25 +6,55 @@ from sklearn.model_selection import train_test_split
 import random
 
 
-height = 32
-width = 48
+height = 40
+width = 40
 
 
 def load(n=10000, length=20):
+    input_len = length
     data_input = []
     data_target = []
     items = glob.glob("./Data/*.npy")
     for idx, item in enumerate(items):
-        print("Loading %s/%s" % (idx+1, len(items)))
+        # print("Loading %s/%s" % (idx+1, len(items)))
         array = np.load(item)
         arr_shape = array.shape # (32, 48, n)
-        for i in range(0, arr_shape[2]-length):
-            data_input.append(array[:, :, i:i+length].reshape((height*width, length)))
-            data_target.append(array[:, :, i+length].flatten())
-        if n < len(data_target):
+        break_flg = False
+        for i in range(0, arr_shape[2]-input_len):
+            data_input.append(array[:, :, i:i+input_len]) #.reshape((height*width, input_len)))
+            data_target.append(array[:, :, i+input_len]) #.flatten())
+            if n == len(data_target):
+                break_flg = True
+                break
+        if break_flg:
             break
-    result_input = np.array(data_input, dtype=np.uint8).transpose(0, 2, 1)
-    result_target = np.array(data_target, dtype=np.uint8)
+    result_input = np.array(data_input, dtype=np.uint8).transpose(0, 3, 1, 2).reshape((n, input_len, 40, 40, 1))
+    result_target = np.array(data_target, dtype=np.uint8) # .transpose(0, 2, 1).reshape((1, 40, 40, 1))
+    # print(result_target)
+    return result_input, result_target[:, np.newaxis, :, :, np.newaxis]
+
+
+def load_shift(n=10000, length=20):
+    input_len = length
+    data_input = []
+    data_target = []
+    items = glob.glob("./Data/*.npy")
+    for idx, item in enumerate(items):
+        # print("Loading %s/%s" % (idx+1, len(items)))
+        array = np.load(item)
+        arr_shape = array.shape # (32, 48, n)
+        break_flg = False
+        for i in range(0, arr_shape[2]-input_len):
+            i2 = i + 1
+            data_input.append(array[:, :, i:i+input_len])
+            data_target.append(array[:, :, i2:i2+input_len])
+            if n == len(data_target):
+                break_flg = True
+                break
+        if break_flg:
+            break
+    result_input = np.array(data_input, dtype=np.uint8).transpose(0, 3, 1, 2).reshape((n, input_len, 40, 40, 1))
+    result_target = np.array(data_target, dtype=np.uint8).transpose(0, 3, 1, 2).reshape((n, input_len, 40, 40, 1))
     return result_input, result_target
 
 
@@ -57,6 +87,7 @@ def viewer(slice_data):
     print("Press any key within activated opencv window.")
     cv2.imshow("test", img)
     cv2.waitKey(0)
+
 
 def main():
     X, Y = load()

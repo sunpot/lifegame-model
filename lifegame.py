@@ -8,8 +8,8 @@ import cv2
 import time
 import uuid
 
-height = 32
-width = 48
+height = 40
+width = 40
 mask = np.ones((3, 3), dtype=int)
 
 
@@ -57,8 +57,8 @@ def calc_weight(F):
 
 
 def save_all(list):
-    fname = '.\Val\%s.npy' % str(uuid.uuid4())
-    if len(list) < 30:
+    fname = './Val/%s.npy' % str(uuid.uuid4())
+    if len(list) < 20:
         print("\n\nDiscard.\n\n")
         return
     print("\n\nSaving %s\n\n"%fname)
@@ -68,28 +68,57 @@ def save_all(list):
     np.save(fname, array)
     return
 
+
+def hasCycle(arr):
+    """
+    Floyd's cycle-finding algorithm is a pointer algorithm that uses 2 pointers,
+    which move through the sequence at different speeds.
+    """
+    osoi = np.array(arr)
+    hayai = np.array(arr)
+
+    i_osoi = 0
+    i_hayai = 0
+
+    while True:
+        i_osoi += 1
+        i_hayai += 2
+        if len(arr) <= i_osoi or len(arr) <= i_hayai:
+            break
+        try:
+            if osoi[i_osoi] == hayai[i_hayai]:
+                print("Cycle found")
+                return True
+        except IndexError:
+            return False
+    return False
+
 def main():
     p = 0.08
     q = np.array([0, 0, 0, 0, 0])
     results = []
+    weights = []
     F = init_state(width, height, init_alive_prob=p)
     ret = 0
     wait = 10
     i = 0
     while True:
-        if 0 == i%50:
-            img = to_image(F, scale=10.0)
-            cv2.imshow("test", img)
-            i = 0
-        i += 1
-        q = queue(q, calc_weight(F))
+        # if 0 == i%50:
+        #     img = to_image(F, scale=10.0)
+        #     cv2.imshow("test", img)
+        #     i = 0
+        # i += 1
+        weight = calc_weight(F)
+        weights.append(weight)
+        q = queue(q, weight)
         is_same = is_all_same(q)
         results.append(F)
-        # ret = cv2.waitKey(wait)
+
         F = next_generation(F)
-        if is_same:
+        if is_same or hasCycle(weights):
             save_all(results)
             results = []
+            weights = []
             F = init_state(width, height, init_alive_prob=p)
 
     cv2.destroyAllWindows()
