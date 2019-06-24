@@ -53,9 +53,9 @@ def load_shift(n=10000, length=20):
                 break
         if break_flg:
             break
-    result_input = np.array(data_input, dtype=np.uint8).transpose(0, 3, 1, 2).reshape((n, input_len, 40, 40, 1))
-    result_target = np.array(data_target, dtype=np.uint8).transpose(0, 3, 1, 2).reshape((n, input_len, 40, 40, 1))
-    return result_input, result_target
+    result_input = np.array(data_input, dtype=np.uint8).transpose(0, 3, 1, 2) # .reshape((n, input_len, 40, 40, 1))
+    result_target = np.array(data_target, dtype=np.uint8).transpose(0, 3, 1, 2) # .reshape((n, input_len, 40, 40, 1))
+    return result_input[:,:,:,:,np.newaxis], result_target[:,:,:,:,np.newaxis]
 
 
 def load_one(length=20):

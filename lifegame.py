@@ -7,9 +7,11 @@ from scipy import signal
 import cv2
 import time
 import uuid
+from io import BytesIO
+import bz2
 
-height = 40
-width = 40
+height = 256
+width = 256
 mask = np.ones((3, 3), dtype=int)
 
 
@@ -57,7 +59,7 @@ def calc_weight(F):
 
 
 def save_all(list):
-    fname = './Val/%s.npy' % str(uuid.uuid4())
+    fname = './Data/%s.npy.bz2' % str(uuid.uuid4())
     if len(list) < 20:
         print("\n\nDiscard.\n\n")
         return
@@ -65,7 +67,13 @@ def save_all(list):
     array = np.zeros((height, width, len(list)))
     for i in range(len(list)):
         array[:,:,i] = list[i]
-    np.save(fname, array)
+    bytes_io = BytesIO()
+    np.save(bytes_io, array)
+    d = bz2.compress(bytes_io.getvalue(), 9)
+ 
+    f = open(fname, "wb")
+    f.write(d)
+    f.close()
     return
 
 

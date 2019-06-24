@@ -16,15 +16,15 @@ import loader
 
 class Params:
     n_in = 1600
-    n_hidden = 1000
+    n_hidden = 100
     n_out = 1600
     epochs = 50
-    batch_size = 1000
+    batch_size = 10
     inputlen = 20
     test_ratio = 0.2
     val_split = 0.1
     lr = 1.0
-    n_samples = 5000
+    n_samples = 1000
 
     def print(self):
         print("@@@@@@@@@@@@@@@@@@@@@@@@\n")
@@ -37,7 +37,7 @@ class Params:
 
 p = Params()
 
-d_input, d_target = loader.load_shift(p.n_samples)
+d_input, d_target = loader.load_shift(n=p.n_samples)
 # x, y = d_input, d_target
 print("%s, %s" % (d_input.shape, d_target.shape))
 p.print()
