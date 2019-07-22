@@ -10,8 +10,8 @@ import uuid
 from io import BytesIO
 import bz2
 
-height = 256
-width = 256
+height = 64
+width = 64
 mask = np.ones((3, 3), dtype=int)
 
 
@@ -59,21 +59,15 @@ def calc_weight(F):
 
 
 def save_all(list):
-    fname = './Data/%s.npy.bz2' % str(uuid.uuid4())
+    fname = './Data/%s.npy' % str(uuid.uuid4())
     if len(list) < 20:
         print("\n\nDiscard.\n\n")
         return
     print("\n\nSaving %s\n\n"%fname)
-    array = np.zeros((height, width, len(list)))
+    array = np.zeros((len(list),height, width))
     for i in range(len(list)):
-        array[:,:,i] = list[i]
-    bytes_io = BytesIO()
-    np.save(bytes_io, array)
-    d = bz2.compress(bytes_io.getvalue(), 9)
- 
-    f = open(fname, "wb")
-    f.write(d)
-    f.close()
+        array[i,:,:] = list[i]
+    np.save(fname, array)
     return
 
 
